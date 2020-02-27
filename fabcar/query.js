@@ -21,7 +21,7 @@ blockchainClient.newChannel('mychannel', 'grpc://localhost:7051');
 
 //Set key value store
 blockchainClient.ready(storePath, 'user1')
-.then(async(user)=>{
+.then(async()=>{
 	//make request
 	const request = {
 		//targets : --- letting this default to the peers assigned to the channel
@@ -29,5 +29,5 @@ blockchainClient.ready(storePath, 'user1')
 		fcn: 'queryAllCars',
 		args: ['']
 	};
-	blockchainClient.query(user, request);
+	blockchainClient.query(request);
 });

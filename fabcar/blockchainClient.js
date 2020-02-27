@@ -8,13 +8,8 @@ class BlockchainClient{
         this.fabricClient = new Fabric_Client();
     }
 
-    async query(user, params) {
-        if (user && user.isEnrolled()) {
-            console.log("Succesfully loaded user from persistence");
-        }
-        else{
-            throw new Error("Failed to load user from persistence");
-        }
+    async query(params) {
+        this.isEnrolled(this.user);
         //responses could be multiple if multiple peers were used as targets
         let responses = await this.channel.queryByChaincode(params);
         console.log("Query has completed, checking results");
@@ -30,17 +25,22 @@ class BlockchainClient{
         }
     }
 
-    sendTransaction(params) {
-
+    sendTransaction(user, params) {
+        this.isEnrolled(user);
     }
 
-    async getUser(userName) {
-        return await this.fabricClient.getUserContext(userName, true);
+    isEnrolled(user) {
+        if (user && user.isEnrolled()) {
+            console.log("Succesfully loaded user from persistence");
+        }
+        else{
+            throw new Error("Failed to load user from persistence");
+        }
     }
 
     async ready(storePath, userName) {
         await this.setKeyValueStore(storePath);
-        return await this.getUser(userName);
+        this.user = await this.fabricClient.getUserContext(userName, true);
     }
 
     async setKeyValueStore(storePath) {
