@@ -13,21 +13,21 @@ const BlockchainClient = require('./blockchainClient.js');
 
 //Initialize client
 var blockchainClient = new BlockchainClient();
-//Set key store path
+//Key store path
 var storePath = path.join(__dirname, 'hfc-key-store');
-
 //Set new channel
 blockchainClient.newChannel('mychannel', 'grpc://localhost:7051');
 
-//Set key value store
+//Ready the client
 blockchainClient.ready(storePath, 'user1')
-.then(async()=>{
-	//make request
-	const request = {
-		//targets : --- letting this default to the peers assigned to the channel
-		chaincodeId: 'fabcar',
-		fcn: 'queryAllCars',
-		args: ['']
-	};
-	blockchainClient.query(request);
-});
+	.then(async()=>{
+		//make request
+		const request = {
+			//targets : --- letting this default to the peers assigned to the channel
+			chaincodeId: 'fabcar',
+			fcn: 'queryAllCars',
+			args: ['']
+		};
+		let results = await blockchainClient.query(request);
+		console.log(results[0]);
+	});

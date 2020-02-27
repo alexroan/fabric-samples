@@ -14,19 +14,27 @@ class BlockchainClient{
         let responses = await this.channel.queryByChaincode(params);
         console.log("Query has completed, checking results");
         // responses could have more than one  results if there multiple peers were used as targets
+        let response = false;
         if (responses && responses.length == 1) {
             if (responses[0] instanceof Error) {
                 console.error("error from query = ", responses[0]);
             } else {
-                console.log("Response is ", responses[0].toString());
+                response = JSON.parse(responses[0].toString());
             }
         } else {
             console.log("No payloads were returned from query");
         }
+        return response;
     }
 
-    sendTransaction(user, params) {
-        this.isEnrolled(user);
+    async sendTransaction(params) {
+        this.isEnrolled(this.user);
+        let transactionId = this.fabricClient.newTransactionID();
+        console.log("Assigning new transaction id: ", transactionId._transaction_id);
+        params.chainId = this.channelName;
+        params.txId = transactionId;
+        let responses = await this.channel.sendTransactionProposal(params);
+        console.log(responses);
     }
 
     isEnrolled(user) {
@@ -60,7 +68,8 @@ class BlockchainClient{
     }
 
     newChannel(name, peerAddress, ordererAddress = false) {
-        this.channel = this.fabricClient.newChannel(name);
+        this.channelName = name;
+        this.channel = this.fabricClient.newChannel(this.channelName);
         this.peer = this.fabricClient.newPeer(peerAddress);
         this.channel.addPeer(this.peer);
         if(ordererAddress) {
