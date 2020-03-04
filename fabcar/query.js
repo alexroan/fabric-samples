@@ -29,5 +29,8 @@ blockchainClient.ready(storePath, 'user1')
 			args: ['']
 		};
 		let results = await blockchainClient.query(request);
-		console.log(results[0]);
+		console.log(results);
+	})
+	.catch((err)=>{
+		console.error(err);
 	});
