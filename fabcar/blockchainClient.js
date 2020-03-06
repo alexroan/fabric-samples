@@ -2,8 +2,6 @@
 
 var Fabric_Client = require('fabric-client');
 var util = require('util');
-var os = require('os');
-
 
 class BlockchainClient{
 
